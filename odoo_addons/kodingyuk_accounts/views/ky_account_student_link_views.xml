@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ky_account_student_link_tree" model="ir.ui.view">
+        <field name="name">ky.account.student.link.tree</field>
+        <field name="model">ky.account.student.link</field>
+        <field name="arch" type="xml">
+            <tree decoration-warning="status == 'pending'" decoration-muted="status == 'revoked'">
+                <field name="account_id"/>
+                <field name="student_id"/>
+                <field name="relationship"/>
+                <field name="status"/>
+                <field name="verified_method"/>
+                <field name="verified_at"/>
+                <field name="revoked_at"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ky_account_student_link_form" model="ir.ui.view">
+        <field name="name">ky.account.student.link.form</field>
+        <field name="model">ky.account.student.link</field>
+        <field name="arch" type="xml">
+            <form string="Account Student Link">
+                <sheet>
+                    <group>
+                        <field name="account_id"/>
+                        <field name="student_id"/>
+                        <field name="relationship"/>
+                        <field name="status"/>
+                        <field name="verified_method"/>
+                        <field name="verified_at"/>
+                        <field name="revoked_at"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ky_account_student_link" model="ir.actions.act_window">
+        <field name="name">Student Account Links</field>
+        <field name="res_model">ky.account.student.link</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

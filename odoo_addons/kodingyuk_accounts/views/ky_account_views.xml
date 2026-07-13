@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ky_account_tree" model="ir.ui.view">
+        <field name="name">ky.account.tree</field>
+        <field name="model">ky.account</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="status in ('suspended', 'deleted')">
+                <field name="name"/>
+                <field name="username"/>
+                <field name="email"/>
+                <field name="account_type"/>
+                <field name="status"/>
+                <field name="email_verified"/>
+                <field name="created_source"/>
+                <field name="last_login_at"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ky_account_form" model="ir.ui.view">
+        <field name="name">ky.account.form</field>
+        <field name="model">ky.account</field>
+        <field name="arch" type="xml">
+            <form string="KodingYuk Account">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Identity">
+                            <field name="subject_uuid"/>
+                            <field name="username"/>
+                            <field name="email"/>
+                            <field name="email_verified"/>
+                            <field name="email_verified_at"/>
+                        </group>
+                        <group string="Account">
+                            <field name="account_type"/>
+                            <field name="status"/>
+                            <field name="partner_id"/>
+                            <field name="created_source"/>
+                            <field name="last_login_at"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Students">
+                            <field name="student_link_ids">
+                                <tree editable="bottom">
+                                    <field name="student_id"/>
+                                    <field name="relationship"/>
+                                    <field name="status"/>
+                                    <field name="verified_method"/>
+                                    <field name="verified_at"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="External Identities">
+                            <field name="identity_ids">
+                                <tree editable="bottom">
+                                    <field name="provider"/>
+                                    <field name="provider_subject"/>
+                                    <field name="provider_email"/>
+                                    <field name="last_used_at"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Consents">
+                            <field name="consent_ids" readonly="1">
+                                <tree>
+                                    <field name="purpose"/>
+                                    <field name="channel"/>
+                                    <field name="status"/>
+                                    <field name="policy_version"/>
+                                    <field name="source"/>
+                                    <field name="consented_at"/>
+                                    <field name="revoked_at"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ky_account_search" model="ir.ui.view">
+        <field name="name">ky.account.search</field>
+        <field name="model">ky.account</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="username"/>
+                <field name="email"/>
+                <field name="subject_uuid"/>
+                <filter string="Active" name="active" domain="[('status','=','active')]"/>
+                <filter string="Students" name="students" domain="[('account_type','=','student')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Type" name="group_type" context="{'group_by':'account_type'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by':'status'}"/>
+                    <filter string="Source" name="group_source" context="{'group_by':'created_source'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ky_account" model="ir.actions.act_window">
+        <field name="name">External Accounts</field>
+        <field name="res_model">ky.account</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_ky_account_search"/>
+    </record>
+</odoo>

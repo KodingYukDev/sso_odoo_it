@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ky_oidc_client_tree" model="ir.ui.view">
+        <field name="name">ky.oidc.client.tree</field>
+        <field name="model">ky.oidc.client</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="status == 'disabled'">
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="public_client"/>
+                <field name="scope"/>
+                <field name="status"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ky_oidc_client_form" model="ir.ui.view">
+        <field name="name">ky.oidc.client.form</field>
+        <field name="model">ky.oidc.client</field>
+        <field name="arch" type="xml">
+            <form string="OIDC Client">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="client_id"/>
+                        <field name="public_client"/>
+                        <field name="scope"/>
+                        <field name="status"/>
+                    </group>
+                    <group string="Exact Redirect URIs">
+                        <field name="redirect_uris" placeholder="https://app.kodingyuk.id/auth/callback"/>
+                        <field name="post_logout_redirect_uris" placeholder="https://app.kodingyuk.id/"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ky_oidc_client" model="ir.actions.act_window">
+        <field name="name">OIDC Clients</field>
+        <field name="res_model">ky.oidc.client</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

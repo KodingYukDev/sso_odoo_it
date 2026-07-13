@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_accounts" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.kodingyuk.accounts</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="KodingYuk Accounts" name="kodingyuk_accounts">
+                    <block title="Public Account Service">
+                        <setting string="Public Accounts URL" help="Exact HTTPS origin used in verification links and as OIDC issuer.">
+                            <field name="accounts_public_origin" placeholder="https://accounts.kodingyuk.id"/>
+                        </setting>
+                        <setting string="Service API Key" help="Use the same secret in ODOO_ACCOUNTS_API_KEY on the web service.">
+                            <field name="accounts_api_key" password="True"/>
+                        </setting>
+                        <setting string="Security Email Sender" help="This address must be accepted by the configured Odoo outgoing mail server.">
+                            <field name="accounts_email_from" placeholder="account@kodingyuk.id"/>
+                        </setting>
+                    </block>
+                    <block title="Student Linking">
+                        <setting string="Direct Student Claim" help="Keep disabled for production until an additional student or guardian verification method is approved.">
+                            <field name="accounts_allow_direct_student_claim"/>
+                        </setting>
+                    </block>
+                    <block title="Security Audit">
+                        <setting string="Audit Retention" help="Controlled deletion runs daily. Use at least 30 days and align it with the privacy policy.">
+                            <field name="accounts_audit_retention_days"/>
+                            <span class="ms-2">days</span>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_accounts_config_settings" model="ir.actions.act_window">
+        <field name="name">KodingYuk Accounts Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'kodingyuk_accounts'}</field>
+    </record>
+</odoo>

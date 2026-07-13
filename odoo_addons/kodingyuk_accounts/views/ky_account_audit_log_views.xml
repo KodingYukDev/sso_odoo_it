@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ky_account_audit_log_tree" model="ir.ui.view">
+        <field name="name">ky.account.audit.log.tree</field>
+        <field name="model">ky.account.audit.log</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false">
+                <field name="occurred_at"/>
+                <field name="event"/>
+                <field name="outcome" widget="badge"/>
+                <field name="account_id"/>
+                <field name="identifier_hint"/>
+                <field name="client_id"/>
+                <field name="source"/>
+                <field name="request_id" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ky_account_audit_log_form" model="ir.ui.view">
+        <field name="name">ky.account.audit.log.form</field>
+        <field name="model">ky.account.audit.log</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false" delete="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="occurred_at"/>
+                            <field name="event"/>
+                            <field name="outcome"/>
+                            <field name="source"/>
+                        </group>
+                        <group>
+                            <field name="account_id"/>
+                            <field name="actor_user_id"/>
+                            <field name="subject_uuid"/>
+                            <field name="identifier_hint"/>
+                            <field name="client_id"/>
+                        </group>
+                    </group>
+                    <group string="Request Context" groups="kodingyuk_accounts.group_accounts_manager">
+                        <field name="request_id"/>
+                        <field name="ip_address"/>
+                        <field name="user_agent"/>
+                    </group>
+                    <group string="Safe Metadata">
+                        <field name="details"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ky_account_audit_log_search" model="ir.ui.view">
+        <field name="name">ky.account.audit.log.search</field>
+        <field name="model">ky.account.audit.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="event"/>
+                <field name="account_id"/>
+                <field name="client_id"/>
+                <field name="request_id"/>
+                <filter name="failures" string="Failures" domain="[('outcome','=','failure')]"/>
+                <filter name="successes" string="Successes" domain="[('outcome','=','success')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_event" string="Event" context="{'group_by':'event'}"/>
+                    <filter name="group_outcome" string="Outcome" context="{'group_by':'outcome'}"/>
+                    <filter name="group_day" string="Day" context="{'group_by':'occurred_at:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ky_account_audit_log" model="ir.actions.act_window">
+        <field name="name">Security Audit Logs</field>
+        <field name="res_model">ky.account.audit.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_ky_account_audit_log_search"/>
+    </record>
+</odoo>

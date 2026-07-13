@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ky_account_consent_tree" model="ir.ui.view">
+        <field name="name">ky.account.consent.tree</field>
+        <field name="model">ky.account.consent</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="status == 'granted'" decoration-muted="status == 'revoked'">
+                <field name="account_id"/>
+                <field name="student_id"/>
+                <field name="purpose"/>
+                <field name="channel"/>
+                <field name="status"/>
+                <field name="actor_account_id"/>
+                <field name="policy_version"/>
+                <field name="source"/>
+                <field name="consented_at"/>
+                <field name="revoked_at"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ky_account_consent_form" model="ir.ui.view">
+        <field name="name">ky.account.consent.form</field>
+        <field name="model">ky.account.consent</field>
+        <field name="arch" type="xml">
+            <form string="Consent Evidence" create="0" edit="0" delete="0">
+                <sheet>
+                    <group>
+                        <field name="account_id"/>
+                        <field name="student_id"/>
+                        <field name="purpose"/>
+                        <field name="channel"/>
+                        <field name="status"/>
+                        <field name="actor_account_id"/>
+                        <field name="policy_version"/>
+                        <field name="source"/>
+                        <field name="evidence_ref"/>
+                        <field name="consented_at"/>
+                        <field name="revoked_at"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ky_account_consent" model="ir.actions.act_window">
+        <field name="name">Consent Evidence</field>
+        <field name="res_model">ky.account.consent</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

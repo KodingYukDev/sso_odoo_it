@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="menu_accounts_root"
+        name="KodingYuk Accounts"
+        sequence="35"
+        groups="kodingyuk_accounts.group_accounts_user"
+    />
+    <menuitem id="menu_accounts" name="Accounts" parent="menu_accounts_root" action="action_ky_account" sequence="10"/>
+    <menuitem id="menu_student_links" name="Student Links" parent="menu_accounts_root" action="action_ky_account_student_link" sequence="20"/>
+    <menuitem id="menu_consents" name="Consent Evidence" parent="menu_accounts_root" action="action_ky_account_consent" sequence="30"/>
+    <menuitem id="menu_audit_logs" name="Audit Logs" parent="menu_accounts_root" action="action_ky_account_audit_log" sequence="35"/>
+    <menuitem id="menu_oidc_clients" name="OIDC Clients" parent="menu_accounts_root" action="action_ky_oidc_client" sequence="40" groups="kodingyuk_accounts.group_accounts_manager"/>
+    <menuitem id="menu_accounts_settings" name="Settings" parent="menu_accounts_root" action="action_accounts_config_settings" sequence="90" groups="kodingyuk_accounts.group_accounts_manager"/>
+</odoo>
