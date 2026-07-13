@@ -2,7 +2,7 @@ import hmac
 import html
 import logging
 import re
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlsplit
 
 from psycopg2 import IntegrityError
 
@@ -54,6 +54,24 @@ def _mask_identifier(value):
     return "%s***" % value[:2]
 
 
+def _normalize_origin(value):
+    value = (value or "").strip()
+    if not value:
+        return ""
+    value = re.sub(r"^(?:https?://)+", "", value)
+    if "://" not in value:
+        if value.startswith("https//"):
+            value = "https://" + value[len("https//"):]
+        elif value.startswith("http//"):
+            value = "http://" + value[len("http//"):]
+        else:
+            value = "https://" + value.lstrip("/")
+    parsed = urlsplit(value)
+    if not parsed.scheme or not parsed.netloc:
+        raise ValidationError("accounts.public_origin must be a full URL such as https://accounts.kodingyuk.id.")
+    return "%s://%s" % (parsed.scheme, parsed.netloc.rstrip("/"))
+
+
 class KodingYukAccountsApi(http.Controller):
     def _require_service(self):
         if not _is_authorized():
@@ -61,9 +79,9 @@ class KodingYukAccountsApi(http.Controller):
         return None
 
     def _public_origin(self):
-        return request.env["ir.config_parameter"].sudo().get_param(
-            "accounts.public_origin", ""
-        ).rstrip("/")
+        return _normalize_origin(
+            request.env["ir.config_parameter"].sudo().get_param("accounts.public_origin", "")
+        )
 
     def _audit(self, event, outcome, data=None, account=None, identifier="", client_id="", details=None):
         data = data if isinstance(data, dict) else {}
@@ -126,7 +144,7 @@ class KodingYukAccountsApi(http.Controller):
                 "email_from": sender,
                 "auto_delete": True,
             }
-        )
+        ).send(raise_exception=True)
 
     @http.route("/accounts/v1/health", type="http", auth="public", methods=["GET"], csrf=False)
     def health(self):
