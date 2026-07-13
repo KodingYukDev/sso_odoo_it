@@ -7,7 +7,7 @@ class ResConfigSettings(models.TransientModel):
     accounts_public_origin = fields.Char(
         string="Public Accounts URL",
         config_parameter="accounts.public_origin",
-        help="Exact public origin, for example https://accounts.kodingyuk.id",
+        help="Exact public origin, for example https://account.kodingyuk.id",
     )
     accounts_api_key = fields.Char(
         string="Accounts Service API Key",

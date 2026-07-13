@@ -54,7 +54,7 @@ odoo-bin \
 
 Buka **KodingYuk Accounts → Settings** dan isi:
 
-- Public Accounts URL: `https://accounts.kodingyuk.id`
+- Public Accounts URL: `https://account.kodingyuk.id`
 - Service API Key: secret server-to-server minimal 32 byte
 - Security Email Sender: sender yang sudah diverifikasi pada SMTP Odoo
 - Direct Student Claim: nonaktif untuk production V1

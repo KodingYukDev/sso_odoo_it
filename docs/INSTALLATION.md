@@ -52,7 +52,7 @@ Buka **KodingYuk Accounts → Settings**:
 
 | Setting | Nilai |
 |---|---|
-| Public Accounts URL | `https://accounts.kodingyuk.id` |
+| Public Accounts URL | `https://account.kodingyuk.id` |
 | Service API Key | Random secret minimal 32 byte; sama dengan `ODOO_ACCOUNTS_API_KEY` pada JS |
 | Security Email Sender | Contoh `account@kodingyuk.id`, harus diterima SMTP |
 | Direct Student Claim | Nonaktif untuk production V1 |

@@ -17,7 +17,7 @@ implementation: final-v1
 > OIDC Authorization Code + PKCE, dan student claim dengan approval admin.
 
 Accounts KodingYuk adalah layanan identitas publik di
-`https://accounts.kodingyuk.id` untuk siswa, orang tua, dan pengguna umum.
+`https://account.kodingyuk.id` untuk siswa, orang tua, dan pengguna umum.
 Layanan menyediakan satu akun dan satu sesi login untuk seluruh produk publik
 KodingYuk, termasuk KodyBlocks, KodyBlocks Jr, KodyLabs, TechLearn, Student
 Dashboard, dan KodyHost.
@@ -243,7 +243,7 @@ Minimal identity token:
 ```json
 {
   "sub": "0fbc7b6d-...",
-  "iss": "https://accounts.kodingyuk.id",
+  "iss": "https://account.kodingyuk.id",
   "aud": "kodyblocks-jr-web",
   "name": "Budi",
   "account_type": "student"
@@ -309,7 +309,7 @@ least privilege, audit log, rate limit, dan idempotency key.
 
 ```mermaid
 flowchart LR
-    U["Siswa / Publik / Orang Tua"] --> A["accounts.kodingyuk.id"]
+    U["Siswa / Publik / Orang Tua"] --> A["account.kodingyuk.id"]
     A --> AM["Odoo custom model ky.account"]
     AM --> ST["m.siswa"]
     AM --> RP["res.partner / CRM"]
