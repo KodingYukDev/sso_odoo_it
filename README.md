@@ -1,46 +1,68 @@
-# Accounts KodingYuk
+# KodingYuk Accounts — Odoo Addon
 
-Implementasi final V1 layanan identitas publik dan SSO KodingYuk untuk
-`accounts.kodingyuk.id`.
+Addon Odoo 17 yang menjadi source of truth untuk akun publik KodingYuk. Akun
+publik disimpan pada `ky.account`, bukan `res.users`, sehingga login internal tim
+KodingYuk tetap terpisah.
 
-Repositori ini berisi dua komponen yang sengaja dipisahkan:
+Repository ini sengaja berbentuk satu addon langsung di root agar dapat di-clone
+langsung ke `extra-addons/kodingyuk_accounts`.
 
-- `odoo_addons/kodingyuk_accounts`: model akun publik, relasi siswa, consent,
-  registry OIDC client, dan API server-to-server.
-- `web`: website register/login sekaligus OpenID Provider (OIDC) untuk seluruh
-  produk KodingYuk.
+Service web/OIDC berada di repository terpisah:
+[`KodingYukDev/sso_js_it`](https://github.com/KodingYukDev/sso_js_it).
 
-## Dokumen
+## Model utama
 
-- [Product Requirements Document](docs/PRD.md)
-- [Audit Repository dan Kondisi Saat Ini](docs/REPOSITORY-AUDIT.md)
-- [Panduan Deployment](docs/DEPLOYMENT.md)
-- [Instalasi Final V1 dan Informasi yang Dibutuhkan](docs/INSTALLATION.md)
-- [Security Audit Log](docs/AUDIT-LOG.md)
-- [Panduan Integrasi Produk](docs/PRODUCT-INTEGRATION.md)
+- `ky.account`: akun publik dan password hash.
+- `ky.account.token`: token sekali pakai untuk verifikasi email/reset password.
+- `ky.account.student.link`: relasi akun ke master existing `m.siswa`.
+- `ky.account.consent`: consent append-only.
+- `ky.account.audit.log`: security audit trail append-only.
+- `ky.account.identity`: mapping identity sosial/legacy.
+- `ky.oidc.client`: registry aplikasi OIDC.
 
-## Keputusan inti
+## Install cepat
 
-- Odoo tetap menjadi aplikasi internal tim KodingYuk.
-- Pengguna publik/siswa tidak dibuat sebagai `res.users`.
-- Akun eksternal memakai model khusus `ky.account`, mengikuti pola `ky.client`
-  pada KodyHost dan `lms.user` pada TechLearn.
-- Data master siswa tetap menggunakan `m.siswa`; tidak dibuat tabel siswa baru.
-- `m.siswa.access_code` dengan prefix `ST-` tetap dipakai sebagai kode aktivasi,
-  penautan akun, dan fallback selama migrasi.
-- Aplikasi produk memakai SSO melalui OpenID Connect; data project/game tetap
-  berada di penyimpanan masing-masing produk.
+```bash
+cd /mnt/extra-addons
+git clone https://github.com/KodingYukDev/sso_odoo_it.git kodingyuk_accounts
 
-## Menjalankan web secara lokal
-
-```powershell
-cd web
-Copy-Item .env.example .env
-npm install
-npm test
-npm start
+odoo-bin \
+  -c /etc/odoo/odoo.conf \
+  -d NAMA_DATABASE \
+  -i kodingyuk_accounts \
+  --stop-after-init
 ```
 
-Discovery OIDC tersedia di
-`http://localhost:3000/.well-known/openid-configuration`. Untuk produksi,
-Redis, HTTPS, signing key tetap, dan secret API Odoo wajib dikonfigurasi.
+Pastikan `/mnt/extra-addons` tercantum pada `addons_path`, lalu restart Odoo.
+Modul existing `students` harus sudah tersedia karena master siswa tetap memakai
+`m.siswa` dan kode `ST-` yang sudah ada.
+
+## Update
+
+```bash
+cd /mnt/extra-addons/kodingyuk_accounts
+git pull --ff-only origin main
+
+odoo-bin \
+  -c /etc/odoo/odoo.conf \
+  -d NAMA_DATABASE \
+  -u kodingyuk_accounts \
+  --stop-after-init
+```
+
+## Konfigurasi
+
+Buka **KodingYuk Accounts → Settings** dan isi:
+
+- Public Accounts URL: `https://accounts.kodingyuk.id`
+- Service API Key: secret server-to-server minimal 32 byte
+- Security Email Sender: sender yang sudah diverifikasi pada SMTP Odoo
+- Direct Student Claim: nonaktif untuk production V1
+- Audit Retention: default 365 hari
+
+## Dokumentasi
+
+- [Instalasi Odoo](docs/INSTALLATION.md)
+- [API Contract](docs/API.md)
+- [Security Audit Log](docs/AUDIT-LOG.md)
+- [PRD dan arsitektur](docs/PRD.md)
