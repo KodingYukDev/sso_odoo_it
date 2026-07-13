@@ -133,7 +133,7 @@ class KodingYukAccountsApi(http.Controller):
         configured = bool(
             request.env["ir.config_parameter"].sudo().get_param("accounts.api_key")
         )
-        return _ok(service="kodingyuk_accounts", configured=configured)
+        return _ok(service="sso_odoo_it", configured=configured)
 
     @http.route("/accounts/v1/register", type="http", auth="public", methods=["POST"], csrf=False)
     def register(self):

@@ -4,8 +4,8 @@ Addon Odoo 17 yang menjadi source of truth untuk akun publik KodingYuk. Akun
 publik disimpan pada `ky.account`, bukan `res.users`, sehingga login internal tim
 KodingYuk tetap terpisah.
 
-Repository ini sengaja berbentuk satu addon langsung di root agar dapat di-clone
-langsung ke `extra-addons/kodingyuk_accounts`.
+Repository ini sengaja berbentuk satu addon langsung di root. Technical module
+name mengikuti nama repository, yaitu `sso_odoo_it`.
 
 Service web/OIDC berada di repository terpisah:
 [`KodingYukDev/sso_js_it`](https://github.com/KodingYukDev/sso_js_it).
@@ -24,12 +24,12 @@ Service web/OIDC berada di repository terpisah:
 
 ```bash
 cd /mnt/extra-addons
-git clone https://github.com/KodingYukDev/sso_odoo_it.git kodingyuk_accounts
+git clone https://github.com/KodingYukDev/sso_odoo_it.git
 
 odoo-bin \
   -c /etc/odoo/odoo.conf \
   -d NAMA_DATABASE \
-  -i kodingyuk_accounts \
+  -i sso_odoo_it \
   --stop-after-init
 ```
 
@@ -40,13 +40,13 @@ Modul existing `students` harus sudah tersedia karena master siswa tetap memakai
 ## Update
 
 ```bash
-cd /mnt/extra-addons/kodingyuk_accounts
+cd /mnt/extra-addons/sso_odoo_it
 git pull --ff-only origin main
 
 odoo-bin \
   -c /etc/odoo/odoo.conf \
   -d NAMA_DATABASE \
-  -u kodingyuk_accounts \
+  -u sso_odoo_it \
   --stop-after-init
 ```
 

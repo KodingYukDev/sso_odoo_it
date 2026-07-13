@@ -44,7 +44,7 @@ dibatasi dan export log harus diperlakukan sebagai data sensitif.
 Sesudah source addon dan web diperbarui, upgrade modul Odoo lalu restart web:
 
 ```bash
-odoo-bin -d NAMA_DATABASE -u kodingyuk_accounts --stop-after-init
+odoo-bin -d NAMA_DATABASE -u sso_odoo_it --stop-after-init
 ```
 
 Upgrade menambah tabel audit, menu, access rule, dan scheduled action. Tidak ada

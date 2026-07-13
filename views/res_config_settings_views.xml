@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
-                <app string="KodingYuk Accounts" name="kodingyuk_accounts">
+                <app string="KodingYuk Accounts" name="sso_odoo_it">
                     <block title="Public Account Service">
                         <setting string="Public Accounts URL" help="Exact HTTPS origin used in verification links and as OIDC issuer.">
                             <field name="accounts_public_origin" placeholder="https://accounts.kodingyuk.id"/>
@@ -39,6 +39,6 @@
         <field name="res_model">res.config.settings</field>
         <field name="view_mode">form</field>
         <field name="target">inline</field>
-        <field name="context">{'module': 'kodingyuk_accounts'}</field>
+        <field name="context">{'module': 'sso_odoo_it'}</field>
     </record>
 </odoo>

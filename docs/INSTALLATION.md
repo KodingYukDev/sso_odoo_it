@@ -13,13 +13,13 @@
 
 ```bash
 cd /mnt/extra-addons
-git clone https://github.com/KodingYukDev/sso_odoo_it.git kodingyuk_accounts
+git clone https://github.com/KodingYukDev/sso_odoo_it.git
 ```
 
 Struktur hasil clone harus seperti berikut:
 
 ```text
-/mnt/extra-addons/kodingyuk_accounts/
+/mnt/extra-addons/sso_odoo_it/
 ├── __init__.py
 ├── __manifest__.py
 ├── controllers/
@@ -40,7 +40,7 @@ addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons
 odoo-bin \
   -c /etc/odoo/odoo.conf \
   -d NAMA_DATABASE_STAGING \
-  -i kodingyuk_accounts \
+  -i sso_odoo_it \
   --stop-after-init
 ```
 
@@ -100,13 +100,13 @@ dibaca ketika service mulai.
 ## Update
 
 ```bash
-cd /mnt/extra-addons/kodingyuk_accounts
+cd /mnt/extra-addons/sso_odoo_it
 git pull --ff-only origin main
 
 odoo-bin \
   -c /etc/odoo/odoo.conf \
   -d NAMA_DATABASE \
-  -u kodingyuk_accounts \
+  -u sso_odoo_it \
   --stop-after-init
 ```
 

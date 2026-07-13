@@ -34,7 +34,7 @@ class KyAccount(models.Model):
     name = fields.Char(required=True, tracking=True)
     username = fields.Char(index=True, tracking=True)
     email = fields.Char(index=True, tracking=True)
-    password_hash = fields.Char(copy=False, groups="kodingyuk_accounts.group_accounts_manager")
+    password_hash = fields.Char(copy=False, groups="sso_odoo_it.group_accounts_manager")
     account_type = fields.Selection(
         [
             ("public", "Public"),
@@ -301,8 +301,8 @@ class KyAccountAuditLog(models.Model):
     identifier_hint = fields.Char(readonly=True, help="Masked identifier; never stores the full login value.")
     client_id = fields.Char(readonly=True, index=True)
     request_id = fields.Char(readonly=True, index=True)
-    ip_address = fields.Char(readonly=True, groups="kodingyuk_accounts.group_accounts_manager")
-    user_agent = fields.Char(readonly=True, groups="kodingyuk_accounts.group_accounts_manager")
+    ip_address = fields.Char(readonly=True, groups="sso_odoo_it.group_accounts_manager")
+    user_agent = fields.Char(readonly=True, groups="sso_odoo_it.group_accounts_manager")
     source = fields.Char(readonly=True, index=True)
     details = fields.Json(readonly=True)
 

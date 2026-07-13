@@ -38,7 +38,7 @@
                             <field name="client_id"/>
                         </group>
                     </group>
-                    <group string="Request Context" groups="kodingyuk_accounts.group_accounts_manager">
+                    <group string="Request Context" groups="sso_odoo_it.group_accounts_manager">
                         <field name="request_id"/>
                         <field name="ip_address"/>
                         <field name="user_agent"/>
