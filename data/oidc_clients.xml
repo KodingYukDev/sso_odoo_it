@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="ky_oidc_client_kodingyuk_library" model="ky.oidc.client">
+        <field name="name">KodingYuk Library</field>
+        <field name="client_id">kodingyuk-library</field>
+        <field name="public_client">True</field>
+        <field name="redirect_uris">https://library.kodingyuk.id/api/auth/callback/kodingyuk
+http://localhost:3000/api/auth/callback/kodingyuk
+http://localhost:3001/api/auth/callback/kodingyuk</field>
+        <field name="post_logout_redirect_uris">https://library.kodingyuk.id/logout/callback
+http://localhost:3000/logout/callback
+http://localhost:3001/logout/callback</field>
+        <field name="scope">openid profile email</field>
+        <field name="status">active</field>
+    </record>
+</odoo>

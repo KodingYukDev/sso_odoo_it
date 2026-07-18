@@ -1,7 +1,7 @@
 {
     "name": "KodingYuk Accounts",
     "summary": "External accounts and SSO identity mapping for KodingYuk products",
-    "version": "17.0.1.1.2",
+    "version": "17.0.1.1.3",
     "category": "KodingYuk/Identity",
     "author": "PT Koding Yuk Academy",
     "website": "https://kodingyuk.id",
@@ -11,6 +11,7 @@
         "security/security.xml",
         "security/ir.model.access.csv",
         "data/audit_cron.xml",
+        "data/oidc_clients.xml",
         "views/res_config_settings_views.xml",
         "views/ky_account_views.xml",
         "views/ky_account_student_link_views.xml",
