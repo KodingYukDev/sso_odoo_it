@@ -311,18 +311,24 @@ class KodingYukAccountsApi(http.Controller):
                     partner = request.env["res.partner"].sudo().create(
                         {"name": name, "email": email, "type": "contact"}
                     )
-                account = Account.create(
-                    {
-                        "name": name,
-                        "email": email,
-                        "partner_id": partner.id,
-                        "status": "active",
-                        "email_verified": True,
-                        "email_verified_at": now,
-                        "created_source": "google",
-                        "locale": locale,
-                    }
-                )
+                try:
+                    with request.env.cr.savepoint():
+                        account = Account.create(
+                            {
+                                "name": name,
+                                "email": email,
+                                "partner_id": partner.id,
+                                "status": "active",
+                                "email_verified": True,
+                                "email_verified_at": now,
+                                "created_source": "google",
+                                "locale": locale,
+                            }
+                        )
+                except (IntegrityError, ValidationError):
+                    account = Account.find_by_identifier(email)
+                    if not account:
+                        raise
             else:
                 updates = {"last_login_at": now}
                 if not account.email_verified:
@@ -339,14 +345,30 @@ class KodingYukAccountsApi(http.Controller):
                 return _error("account_unavailable", "Account is unavailable.", status=403)
 
             if not identity:
-                identity = Identity.create(
-                    {
-                        "account_id": account.id,
-                        "provider": provider,
-                        "provider_subject": provider_subject,
-                        "provider_email": email,
-                    }
-                )
+                try:
+                    with request.env.cr.savepoint():
+                        identity = Identity.create(
+                            {
+                                "account_id": account.id,
+                                "provider": provider,
+                                "provider_subject": provider_subject,
+                                "provider_email": email,
+                            }
+                        )
+                except IntegrityError:
+                    identity = Identity.search(
+                        [("provider", "=", provider), ("provider_subject", "=", provider_subject)],
+                        limit=1,
+                    )
+                    if not identity:
+                        raise
+                    account = identity.account_id
+                    if account.status not in ("active",):
+                        self._audit(
+                            "auth.social_failed", "failure", data=data, account=account,
+                            identifier=email, details={"provider": provider, "reason": "account_unavailable"},
+                        )
+                        return _error("account_unavailable", "Account is unavailable.", status=403)
             identity.write({"provider_email": email, "last_used_at": now})
             account.write({"last_login_at": now})
             self._audit(
