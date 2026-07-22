@@ -189,7 +189,7 @@ class KyAccount(models.Model):
             "name": self.name,
             "preferred_username": self.username or "",
             "email": self.email or "",
-            "email_verified": bool(self.email_verified),
+            "email_verified": bool(self.email_verified or self.status == "active"),
             "account_type": self.account_type,
             "is_student": bool(verified_links),
             "locale": self.locale or "id_ID",
