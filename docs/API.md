@@ -22,6 +22,7 @@ reverse proxy sebagai lapisan tambahan.
 | GET | `/accounts/v1/health` | Status konfigurasi service |
 | POST | `/accounts/v1/register` | Register akun pending, consent, dan email verification |
 | POST | `/accounts/v1/authenticate` | Verifikasi identifier/password |
+| POST | `/accounts/v1/social/login` | Link atau buat akun dari provider sosial terverifikasi |
 | POST | `/accounts/v1/account/claims` | Mengambil claim OIDC berdasarkan subject UUID |
 | POST | `/accounts/v1/email/verification/request` | Kirim ulang email verifikasi |
 | POST | `/accounts/v1/email/verify` | Konsumsi token verifikasi |

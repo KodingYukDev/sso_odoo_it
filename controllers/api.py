@@ -271,6 +271,107 @@ class KodingYukAccountsApi(http.Controller):
         return _ok(account=account.oidc_claims())
 
     @http.route(
+        "/accounts/v1/social/login", type="http", auth="public", methods=["POST"], csrf=False
+    )
+    def social_login(self):
+        denied = self._require_service()
+        if denied:
+            return denied
+        data = _payload()
+        provider = (data.get("provider") or "").strip().lower()
+        provider_subject = str(data.get("provider_subject") or "").strip()
+        email = (data.get("provider_email") or data.get("email") or "").strip().lower()
+        name = (data.get("name") or email or "KodingYuk Account").strip()[:128]
+        locale = (data.get("locale") or "id_ID").strip()[:16]
+
+        if provider != "google":
+            return _error("unsupported_provider", "Social provider is not supported.")
+        if not provider_subject or not EMAIL_RE.fullmatch(email):
+            return _error("invalid_payload", "Verified Google subject and email are required.")
+        if data.get("email_verified") is not True:
+            self._audit(
+                "auth.social_failed", "failure", data=data, identifier=email,
+                details={"provider": provider, "reason": "email_not_verified"},
+            )
+            return _error("email_not_verified", "Google email must be verified.", status=403)
+
+        Account = request.env["ky.account"].sudo()
+        Identity = request.env["ky.account.identity"].sudo()
+        now = fields.Datetime.now()
+        try:
+            identity = Identity.search(
+                [("provider", "=", provider), ("provider_subject", "=", provider_subject)],
+                limit=1,
+            )
+            account = identity.account_id if identity else Account.find_by_identifier(email)
+
+            if not account:
+                partner = request.env["res.partner"].sudo().search([("email", "=ilike", email)], limit=1)
+                if not partner:
+                    partner = request.env["res.partner"].sudo().create(
+                        {"name": name, "email": email, "type": "contact"}
+                    )
+                account = Account.create(
+                    {
+                        "name": name,
+                        "email": email,
+                        "partner_id": partner.id,
+                        "status": "active",
+                        "email_verified": True,
+                        "email_verified_at": now,
+                        "created_source": "google",
+                        "locale": locale,
+                    }
+                )
+            else:
+                updates = {"last_login_at": now}
+                if not account.email_verified:
+                    updates.update({"email_verified": True, "email_verified_at": now})
+                if account.status == "pending":
+                    updates["status"] = "active"
+                account.write(updates)
+
+            if account.status not in ("active",):
+                self._audit(
+                    "auth.social_failed", "failure", data=data, account=account,
+                    identifier=email, details={"provider": provider, "reason": "account_unavailable"},
+                )
+                return _error("account_unavailable", "Account is unavailable.", status=403)
+
+            if not identity:
+                identity = Identity.create(
+                    {
+                        "account_id": account.id,
+                        "provider": provider,
+                        "provider_subject": provider_subject,
+                        "provider_email": email,
+                    }
+                )
+            identity.write({"provider_email": email, "last_used_at": now})
+            account.write({"last_login_at": now})
+            self._audit(
+                "auth.social_succeeded", "success", data=data, account=account,
+                identifier=email, details={"provider": provider},
+            )
+            return _ok(account=account.oidc_claims())
+        except IntegrityError as exc:
+            request.env.cr.rollback()
+            _logger.info("Social login rejected: %s", exc)
+            self._audit(
+                "auth.social_failed", "failure", data=data, identifier=email,
+                details={"provider": provider, "reason": "duplicate"},
+            )
+            return _error("already_exists", "Social identity could not be linked.", status=409)
+        except Exception:
+            request.env.cr.rollback()
+            _logger.exception("Social login failed")
+            self._audit(
+                "auth.social_failed", "failure", data=data, identifier=email,
+                details={"provider": provider, "reason": "internal"},
+            )
+            return _error("social_login_failed", "Social login failed.", status=500)
+
+    @http.route(
         "/accounts/v1/email/verification/request",
         type="http", auth="public", methods=["POST"], csrf=False,
     )
