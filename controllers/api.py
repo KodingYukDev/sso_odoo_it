@@ -13,10 +13,47 @@ from odoo.http import request
 
 _logger = logging.getLogger(__name__)
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+DEFAULT_ALLOWED_ORIGINS = {
+    "https://kodylabs.kodingyuk.id",
+    "https://kodylab.kodingyuk.id",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+}
+
+
+def _configured_allowed_origins():
+    raw = request.env["ir.config_parameter"].sudo().get_param("accounts.cors_origins", "")
+    origins = set(DEFAULT_ALLOWED_ORIGINS)
+    for value in re.split(r"[\s,]+", raw or ""):
+        value = value.strip()
+        if not value:
+            continue
+        try:
+            origins.add(_normalize_origin(value))
+        except ValidationError:
+            _logger.warning("Ignoring invalid accounts.cors_origins value: %s", value)
+    return origins
+
+
+def _cors_headers():
+    origin = request.httprequest.headers.get("Origin", "")
+    if origin not in _configured_allowed_origins():
+        return [("Vary", "Origin")]
+    return [
+        ("Access-Control-Allow-Origin", origin),
+        ("Access-Control-Allow-Methods", "GET, POST, OPTIONS"),
+        ("Access-Control-Allow-Headers", "Accept, Content-Type, X-Accounts-Key"),
+        ("Access-Control-Max-Age", "86400"),
+        ("Vary", "Origin"),
+    ]
 
 
 def _response(payload, status=200):
-    return request.make_json_response(payload, status=status)
+    return request.make_json_response(payload, headers=_cors_headers(), status=status)
+
+
+def _preflight_response():
+    return request.make_response("", headers=_cors_headers(), status=204)
 
 
 def _ok(**payload):
@@ -73,6 +110,30 @@ def _normalize_origin(value):
 
 
 class KodingYukAccountsApi(http.Controller):
+    @http.route(
+        [
+            "/accounts/v1/health",
+            "/accounts/v1/register",
+            "/accounts/v1/authenticate",
+            "/accounts/v1/social/login",
+            "/accounts/v1/email/verification/request",
+            "/accounts/v1/email/verify",
+            "/accounts/v1/password/reset/request",
+            "/accounts/v1/password/reset",
+            "/accounts/v1/account/claims",
+            "/accounts/v1/student/claim",
+            "/accounts/v1/consent",
+            "/accounts/v1/audit",
+            "/accounts/v1/oidc/clients",
+        ],
+        type="http",
+        auth="public",
+        methods=["OPTIONS"],
+        csrf=False,
+    )
+    def options(self):
+        return _preflight_response()
+
     def _require_service(self):
         if not _is_authorized():
             return _error("unauthorized", "Unauthorized", status=401)
